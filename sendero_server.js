@@ -45,36 +45,42 @@ function process_data(data){
 
 queue.connect('amqp://localhost', function(err, conn) {
 
+
 	connection_queue = conn; 
+	conn.createChannel(function(err,ch) {
 
-	io.on('connection', function(client){
+		io.on('connection', function(client){
 
-		console.log("Connected client...");
-		console.log("EL CLIENTE: ", client);
+			console.log("Connected client...");
+			console.log("EL CLIENTE: ", client);
 
-		/*
-		* 
-		*/
-		client.on('sendFrame', function(data){
-			client.broadcast.emit('frame', data);
+			/*
+			* 
+			*/
+			client.on('sendFrame', function(data){
+				client.broadcast.emit('frame', data);
+			});
+
+			/*
+			* 
+			*/
+			client.on('interaction', function (data) {
+				console.log('Interaction', data);
+
+				// Process data
+				var processed_data = process_data(data)
+
+				// Insert into the queue
+
+				// publisher(connection_queue,processed_data);   
+				ch.sendToQueue(interactions_queue, new Buffer(data));   
+				
+			});
+
 		});
-
-		/*
-		* 
-		*/
-		client.on('interaction', function (data) {
-			console.log('Interaction', data);
-
-			// Process data
-			var processed_data = process_data(data)
-
-			// Insert into the queue
-
-			publisher(connection_queue,processed_data);      
-			
-		});
-
-	});
+	    
+ 	});
+	
 });
 
 app.get('/', function(req, res){
