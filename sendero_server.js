@@ -13,6 +13,8 @@ require('socket.io-stream')(io);
 /***********************************************/
 /* QUEUE https://github.com/squaremo/amqp.node */
 /***********************************************/
+var clientsQty = -1;
+var colorArray = ['243,66,53','205,219,56','156,39,175','3,168,244','0,150,136','255,204,209','255,255,255'];
 
 // Create queue
 var interactions_queue = 'interactions_queue';
@@ -51,6 +53,9 @@ queue.connect('amqp://localhost', function(err, conn) {
 
 		io.on('connection', function(client){
 
+			clientsQty = clientsQty + 1;
+			client.clientColorIndex = clientsQty;
+
 			console.log("Connected client...");
 			console.log("EL CLIENTE: ", client);
 
@@ -66,6 +71,8 @@ queue.connect('amqp://localhost', function(err, conn) {
 			*/
 			client.on('interaction', function (data) {
 				console.log('Interaction', data);
+				console.log(client.clientColorIndex);
+				console.log(data  + ',' +  colorArray[client.clientColorIndex % colorArray.length]);
 
 				// Process data
 				var processed_data = process_data(data)
@@ -73,7 +80,7 @@ queue.connect('amqp://localhost', function(err, conn) {
 				// Insert into the queue
 
 				// publisher(connection_queue,processed_data);   
-				ch.sendToQueue(interactions_queue, new Buffer(data));   
+				ch.sendToQueue(interactions_queue, new Buffer(data + ',' + colorArray[client.clientColorIndex % colorArray.length]));   
 				
 			});
 
