@@ -332,10 +332,6 @@ THREE.OBJLoader.prototype = {
 
 				// smooth shading
 
-			} else {
-
-				// console.log( "THREE.OBJLoader: Unhandled line " + line );
-
 			}
 
 		}

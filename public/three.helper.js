@@ -9,11 +9,9 @@ var raycaster;
 var mouse;
 var intersectionSphere;
 
-var interaction_server = io.connect('192.168.0.106:8080');
-
 function initThree() {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setClearColor( 0x212121, 1);
+  renderer.setClearColor( 0x070707, 1);
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -75,7 +73,6 @@ function addObject(objModel, position, up, front, RGBColor, ID, objectGetter){
   var onProgress = function ( xhr ) {
     if ( xhr.lengthComputable ) {
     var percentComplete = xhr.loaded / xhr.total * 100;
-    console.log( Math.round(percentComplete, 2) + '% downloaded' );
     }
   };
 
@@ -85,8 +82,6 @@ function addObject(objModel, position, up, front, RGBColor, ID, objectGetter){
   var manager = new THREE.LoadingManager();
 
   manager.onProgress = function ( item, loaded, total ) {
-
-    console.log( item, loaded, total );
 
   };
 
@@ -165,7 +160,7 @@ function onDocumentMouseMove( event ) {
     var intersects = raycaster.intersectObjects( objects_intersect, true );
 
     if ( intersects.length > 0 ) {
-      interaction_server.emit('interaction', (intersects[0].point.x).toString() + ',' + (intersects[0].point.y).toString() + ',' + (intersects[0].point.z).toString());
+      server.emit('interaction', (intersects[0].point.x).toString() + ',' + (intersects[0].point.y).toString() + ',' + (intersects[0].point.z).toString());
     }
 
     shouldSend = false;

@@ -23,17 +23,13 @@ function loadPixelsFromXML(xmlPath, callBack){
   xmlhttp.send();
   var xmlDoc=xmlhttp.responseXML;
   
-  console.log(xmlDoc);
 
   var pixelsDoc = xmlDoc.getElementsByTagName("Pixel")
   var pixelsQty = pixelsDoc.length
 
   var loaderFunction = function(object){
   	pixelsList.push(object);
-  	console.log("adding pixel...");
   	if (pixelsList.length == pixelsQty){
-
-  		console.log("calling callback");
 
       // order pixel objects by Id
       pixelsList = _.sortBy(pixelsList, function(o){ return o.pixelId; });

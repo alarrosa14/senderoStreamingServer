@@ -57,7 +57,6 @@ queue.connect('amqp://localhost', function(err, conn) {
 			client.clientColorIndex = clientsQty;
 
 			console.log("Connected client...");
-			console.log("EL CLIENTE: ", client);
 
 			/*
 			* 
@@ -70,10 +69,6 @@ queue.connect('amqp://localhost', function(err, conn) {
 			* 
 			*/
 			client.on('interaction', function (data) {
-				console.log('Interaction', data);
-				console.log(client.clientColorIndex);
-				console.log(data  + ',' +  colorArray[client.clientColorIndex % colorArray.length]);
-
 				// Process data
 				var processed_data = process_data(data)
 
@@ -91,7 +86,6 @@ queue.connect('amqp://localhost', function(err, conn) {
 });
 
 app.get('/', function(req, res){
-  console.log("GETTING!");
   res.sendFile(__dirname + '/views/index.html');
 });
 

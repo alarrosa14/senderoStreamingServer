@@ -694,10 +694,8 @@
                 case 1:
 
                     if (shouldSend){
-                        mouse.x = ( event.touches[0].pageX / (renderer.domElement.width / 2) ) * 2 - 1;
-                        mouse.y = - ( event.touches[0].pageY / (renderer.domElement.height / 2) ) * 2 + 1;
-
-                        console.log(mouse.x, mouse.y);
+                        mouse.x = ( event.touches[0].pageX / (window.innerWidth) ) * 2 - 1;
+                        mouse.y = - ( event.touches[0].pageY / (window.innerHeight) ) * 2 + 1;
 
                         raycaster.setFromCamera( mouse, camera );
 
@@ -706,10 +704,7 @@
                         var intersects = raycaster.intersectObjects( objects_intersect, true );
 
                         if ( intersects.length > 0 ) {
-                          interaction_server.emit('interaction', (intersects[0].point.x).toString() + ',' + (intersects[0].point.y).toString() + ',' + (intersects[0].point.z).toString());
-                          //console.log((intersects[0].point.x).toString() + ',' + (intersects[0].point.y).toString() + ',' + (intersects[0].point.z).toString());
-                        }else{
-                          //console.log('no macho!');
+                          server.emit('interaction', (intersects[0].point.x).toString() + ',' + (intersects[0].point.y).toString() + ',' + (intersects[0].point.z).toString());
                         }
 
                         shouldSend = false;
