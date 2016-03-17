@@ -11,82 +11,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 require('socket.io-stream')(io);
 
 /***********************************************/
-/* QUEUE https://github.com/squaremo/amqp.node */
-/***********************************************/
-var clientsQty = -1;
-var colorArray = ['243,66,53','205,219,56','156,39,175','3,168,244','0,150,136','255,204,209','255,255,255'];
-
-// Create queue
-var interactions_queue = 'interactions_queue';
-var connection_queue;
-
-function bail(err) {
-  console.error(err);
-  process.exit(1);
-}
-
-// Publisher
-function publisher(conn, data) {
-  conn.createChannel(on_open);
-  function on_open(err, ch) {
-    if (err != null) bail(err);
-    ch.assertQueue(interactions_queue);
-    ch.sendToQueue(interactions_queue, new Buffer(data));
-  }
-};
-
-// Process the event data 
-function process_data(data){
-  // Do processing...
-  return data;
-}
-
-/***********************************************/
 /***************** MAIN ************************/
 /***********************************************/
 
-queue.connect('amqp://localhost', function(err, conn) {
 
+io.on('connection', function(client){
 
-	connection_queue = conn; 
-	conn.createChannel(function(err,ch) {
+	console.log("Connected client...");
 
-		io.on('connection', function(client){
+	/*
+	* 
+	*/
+	client.on('sendFrame', function(){
+		console.log('sendFrame');
+		client.broadcast.emit('frame', [255,0,0,0,255,0,0,0,255]);
+	});
 
-			clientsQty = clientsQty + 1;
-			client.clientColorIndex = clientsQty;
-
-			console.log("Connected client...");
-
-			/*
-			* 
-			*/
-			client.on('sendFrame', function(data){
-				client.broadcast.emit('frame', data);
-			});
-
-			/*
-			* 
-			*/
-			client.on('interaction', function (data) {
-				// Process data
-				var processed_data = process_data(data)
-
-				// Insert into the queue
-
-				// publisher(connection_queue,processed_data);   
-				ch.sendToQueue(interactions_queue, new Buffer(data + ',' + colorArray[client.clientColorIndex % colorArray.length]));   
-				
-			});
-
-		});
-	    
- 	});
-	
-});
-
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/views/index.html');
 });
 
 server.listen(8080);
